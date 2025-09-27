@@ -11,3 +11,4 @@ use App\Http\Controllers\NotesController;
 // });
 Route::get('/', NotesController::class . '@index');
 Route::resource('notes', NotesController::class);
+Route::view('/register', 'auth.register'); //using view method to view the registration page
