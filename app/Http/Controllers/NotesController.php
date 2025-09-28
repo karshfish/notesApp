@@ -8,6 +8,7 @@ use App\Models\Note;
 
 class NotesController extends Controller
 {
+
     public function __construct()
     {
         // Ensure only logged-in users can access notes
