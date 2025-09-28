@@ -25,26 +25,33 @@
                 </ul>
 
                 <!-- If user is not logged in -->
+                @auth
+                <!-- If user is logged in (example dropdown) -->
+
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ auth()->user()->name }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                @else
                 <div class="d-flex">
                     <a href="/login" class="btn btn-outline-success me-2">Sign In</a>
                     <a href="/register" class="btn btn-outline-success">Sign Up</a>
                 </div>
+                @endauth
 
-                <!-- If user is logged in (example dropdown) -->
-                <!--
-      <ul class="navbar-nav">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Username
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="/profile">Profile</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/logout">Logout</a></li>
-          </ul>
-        </li>
-      </ul>
-      -->
+
+
             </div>
         </div>
     </nav>

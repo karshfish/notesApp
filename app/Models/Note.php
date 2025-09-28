@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperNote
+ */
 class Note extends Model
 {
     use HasFactory;
@@ -13,6 +16,7 @@ class Note extends Model
         'title',
         'topic',
         'completed',
+        'user_id'
     ];
     public function user(): BelongsTo
     {
