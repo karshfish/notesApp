@@ -5,17 +5,28 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Note;
 
+
 class NotesController extends Controller
 {
+
+    public function __construct()
+    {
+        // Ensure only logged-in users can access notes
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      */
-
-    public function __construct() {}
     public function index()
     {
-        $notes = Note::all();
-        return view('notes.index', ['notes' => $notes]);
+        // Fetch only notes for the logged-in user
+        $notes = auth()->user()->notes()->latest()->get();
+
+        return view('notes.index', [
+            'notes' => $notes,
+            'title' => 'My Notes'
+        ]);
     }
 
     /**
@@ -36,41 +47,43 @@ class NotesController extends Controller
             'topic' => 'required|string|max:255',
             'completed' => 'nullable|boolean'
         ]);
-        Note::create([
-            'title' => $request['title'],
-            'topic' => $request['topic'],
-            'completed' => $request->has('completed')
+
+        auth()->user()->notes()->create([
+            'title' => $request->title,
+            'topic' => $request->topic,
+            'completed' => $request->has('completed'),
         ]);
+
         return redirect()->route('notes.index')->with('success', 'Note created');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //dd($this->notes[$id]);
-        $data = Note::findOrFail($id);
+        // Make sure the note belongs to the logged-in user
+        $note = auth()->user()->notes()->findOrFail($id);
+
         return view('notes.show', [
-            'notes' => $data,
+            'note' => $note,
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-
-
-    public function edit(string $id)
+    public function edit($id)
     {
-        $note = Note::findOrFail($id);
+        $note = auth()->user()->notes()->findOrFail($id);
+
         return view('notes.edit', ['note' => $note]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Note $note)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'title' => 'required|string|max:255',
@@ -78,13 +91,13 @@ class NotesController extends Controller
             'completed' => 'nullable|boolean',
         ]);
 
-        $data = [
+        $note = auth()->user()->notes()->findOrFail($id);
+
+        $note->update([
             'title' => $request->title,
             'topic' => $request->topic,
             'completed' => $request->has('completed'),
-        ];
-
-        $note->update($data);
+        ]);
 
         return redirect()->route('notes.index')->with('success', 'Note updated successfully!');
     }
@@ -92,9 +105,12 @@ class NotesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Note $note)
+    public function destroy($id)
     {
+        $note = auth()->user()->notes()->findOrFail($id);
+
         $note->delete();
+
         return redirect()->route('notes.index')
             ->with('success', 'Note deleted successfully!');
     }
